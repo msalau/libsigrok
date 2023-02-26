@@ -133,6 +133,54 @@ static const struct scpi_command bk_9130_cmd[] = {
 	ALL_ZERO
 };
 
+/* BK Precision 9801 series AC source */
+static const uint32_t bk_9801_devopts[] = {
+	SR_CONF_CONTINUOUS,
+	SR_CONF_LIMIT_SAMPLES | SR_CONF_GET | SR_CONF_SET,
+	SR_CONF_LIMIT_MSEC | SR_CONF_GET | SR_CONF_SET,
+};
+
+static const uint32_t bk_9801_devopts_cg[] = {
+	SR_CONF_OVER_CURRENT_PROTECTION_THRESHOLD | SR_CONF_GET | SR_CONF_SET,
+	SR_CONF_VOLTAGE | SR_CONF_GET,
+	SR_CONF_VOLTAGE_TARGET | SR_CONF_GET | SR_CONF_SET | SR_CONF_LIST,
+	SR_CONF_OUTPUT_FREQUENCY | SR_CONF_GET,
+	SR_CONF_OUTPUT_FREQUENCY_TARGET | SR_CONF_GET | SR_CONF_SET | SR_CONF_LIST,
+	SR_CONF_CURRENT | SR_CONF_GET,
+	SR_CONF_ENABLED | SR_CONF_GET | SR_CONF_SET,
+};
+
+static const struct channel_spec bk_9801_ch[] = {
+	{ "1", { 0, 300, 0.1, 1, 1 }, { 0, 3, 0.1, 4, 4 }, { 0, 300, 4, 4 }, { 1, 500, 0.1, 1, 1 }, NO_OVP_LIMITS, NO_OCP_LIMITS },
+};
+
+static const struct channel_group_spec bk_9801_cg[] = {
+	{ "1", CH_IDX(0), PPS_OCP, SR_MQFLAG_AC },
+};
+
+static const struct scpi_command bk_9801_cmd[] = {
+	{ SCPI_CMD_REMOTE, "SYST:REM" },
+	{ SCPI_CMD_LOCAL, "SYST:LOC" },
+	{ SCPI_CMD_BEEPER, "SYST:BEEP?" },
+	{ SCPI_CMD_BEEPER_ENABLE, "SYST:BEEP ON" },
+	{ SCPI_CMD_BEEPER_DISABLE, "SYST:BEEP OFF" },
+	{ SCPI_CMD_GET_MEAS_VOLTAGE, "MEAS:VOLT?" },
+	{ SCPI_CMD_GET_MEAS_CURRENT, "MEAS:CURR?" },
+	{ SCPI_CMD_GET_MEAS_FREQUENCY, "MEAS:FREQ?" },
+	{ SCPI_CMD_GET_MEAS_POWER, "MEAS:POWER?" },
+	{ SCPI_CMD_GET_VOLTAGE_TARGET, "SOUR:VOLT?" },
+	{ SCPI_CMD_SET_VOLTAGE_TARGET, "SOUR:VOLT %.1f" },
+	{ SCPI_CMD_GET_FREQUENCY_TARGET, "SOUR:FREQ?" },
+	{ SCPI_CMD_SET_FREQUENCY_TARGET, "SOUR:FREQ %.1f" },
+	{ SCPI_CMD_GET_OUTPUT_ENABLED, "OUTP?" },
+	{ SCPI_CMD_SET_OUTPUT_ENABLE, "OUTP ON" },
+	{ SCPI_CMD_SET_OUTPUT_DISABLE, "OUTP OFF" },
+	/* This is not a current limit mode. It is overcurrent protection. */
+	{ SCPI_CMD_GET_OVER_CURRENT_PROTECTION_THRESHOLD, "CONF:PROT:CURR:RMS?" },
+	{ SCPI_CMD_SET_OVER_CURRENT_PROTECTION_THRESHOLD, "CONF:PROT:CURR:RMS %.1f" },
+	ALL_ZERO
+};
+
 /* Chroma 61600 series AC source */
 static const uint32_t chroma_61604_devopts[] = {
 	SR_CONF_CONTINUOUS,
@@ -1364,6 +1412,18 @@ SR_PRIV const struct scpi_pps pps_profiles[] = {
 		ARRAY_AND_SIZE(bk_9130_ch),
 		ARRAY_AND_SIZE(bk_9130_cg),
 		bk_9130_cmd,
+		.probe_channels = NULL,
+		.init_acquisition = NULL,
+		.update_status = NULL,
+	},
+
+	/* BK Precision 9801 */
+	{ "BK PRECISION", "^9801$", SCPI_DIALECT_UNKNOWN, 0,
+		ARRAY_AND_SIZE(bk_9801_devopts),
+		ARRAY_AND_SIZE(bk_9801_devopts_cg),
+		ARRAY_AND_SIZE(bk_9801_ch),
+		ARRAY_AND_SIZE(bk_9801_cg),
+		bk_9801_cmd,
 		.probe_channels = NULL,
 		.init_acquisition = NULL,
 		.update_status = NULL,

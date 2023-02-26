@@ -353,4 +353,7 @@ ATTRS{idVendor}=="0c12", ATTRS{idProduct}=="7016", ENV{ID_SIGROK}="1"
 ATTRS{idVendor}=="0c12", ATTRS{idProduct}=="7025", ENV{ID_SIGROK}="1"
 ATTRS{idVendor}=="0c12", ATTRS{idProduct}=="7100", ENV{ID_SIGROK}="1"
 
+# B&K PRECISION 9801 AC Power Source
+ATTRS{idVendor}=="ffff", ATTRS{idProduct}=="9800", ENV{ID_SIGROK}="1"
+
 LABEL="libsigrok_rules_end"
